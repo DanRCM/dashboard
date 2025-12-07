@@ -1,15 +1,24 @@
-import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
 import Select, { type SelectChangeEvent } from '@mui/material/Select';
-import { useState } from 'react';
 
-export default function SelectorUI() {
-    const [cityInput, setCityInput] = useState('');
+interface SelectorUIProps {
+    onCityChange: (index: number) => void;
+    currentId: number; // <--- Nueva prop para controlar el valor
+}
 
-    const handleChange = (event: SelectChangeEvent<string>) => {
-        setCityInput(event.target.value)
-        alert(event.target.value)
+const cities = [
+    { name: "Guayaquil", id: 0 },
+    { name: "Quito", id: 1 },
+    { name: "Manta", id: 2 },
+    { name: "Cuenca", id: 3 },
+];
+
+export default function SelectorUI({ onCityChange, currentId }: SelectorUIProps) {
+
+    const handleChange = (event: SelectChangeEvent<number>) => {
+        onCityChange(Number(event.target.value));
     };
 
     return (
@@ -17,22 +26,17 @@ export default function SelectorUI() {
             <InputLabel id="city-select-label">Ciudad</InputLabel>
             <Select
                 labelId="city-select-label"
-                id="city-simple-select"
+                id="city-select"
+                value={currentId} // <--- Usamos currentId para el valor
                 label="Ciudad"
                 onChange={handleChange}
-                value={cityInput}>
-                <MenuItem disabled><em>Seleccione una ciudad</em></MenuItem>
-                <MenuItem value={"guayaquil"}>Guayaquil</MenuItem>
-                <MenuItem value={"quito"}>Quito</MenuItem>
-                <MenuItem value={"manta"}>Manta</MenuItem>
-                <MenuItem value={"cuenca"}>Cuenca</MenuItem>
+            >
+                {cities.map((city) => (
+                    <MenuItem key={city.id} value={city.id}>
+                        {city.name}
+                    </MenuItem>
+                ))}
             </Select>
-            {cityInput && (
-                <p>
-                    Información del clima en <span style={{ textTransform: 'capitalize', fontWeight: 'bold' }}>{cityInput}</span>
-                </p>
-            )}
-
         </FormControl>
-    )
+    );
 }
