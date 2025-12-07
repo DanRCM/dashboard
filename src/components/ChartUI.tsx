@@ -24,7 +24,7 @@ export default function ChartUI({ labels, dataValues }: ChartUIProps) {
                     { 
                         data: dataValues, 
                         label: 'Temperatura 2m (°C)', 
-                        color: '#2196f3' // Un azul bonito para el clima
+                        color: '#2196f3'
                     },
                 ]}
                 xAxis={[{ 
