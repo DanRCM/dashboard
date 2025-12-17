@@ -6,10 +6,10 @@ import SelectorUI from './components/SelectorUI';
 import IndicatorUI from './components/IndicatorUI';
 import TableUI from './components/TableUI';
 import ChartUI from './components/ChartUI';
+import CohereAssistant from './components/CohereAssistant'; 
 import useFetchData from './functions/useFetchData';
 import './App.css';
 
-// 1. Configuración de Ciudades y Coordenadas Reales
 const citiesConfig = [
   { name: "Guayaquil", lat: -2.1962, lng: -79.8862 },
   { name: "Quito", lat: -0.1807, lng: -78.4678 },
@@ -18,16 +18,9 @@ const citiesConfig = [
 ];
 
 function App() {
-  
-  // 2. Estado para controlar qué ciudad está seleccionada
   const [selectedCityIndex, setSelectedCityIndex] = useState(0); 
-  
-  // Obtenemos latitud y longitud actuales
   const { lat, lng } = citiesConfig[selectedCityIndex];
-
-  // 3. Pasamos las coordenadas dinámicas al Hook
   const { data, loading, error } = useFetchData(lat, lng);
-
   const [localTime, setLocalTime] = useState(new Date());
 
   useEffect(() => {
@@ -36,7 +29,6 @@ function App() {
   }, []);
 
   const handleCityChange = (index: number) => {
-      // Al cambiar el estado, lat y lng se recalculan y el hook se dispara
       setSelectedCityIndex(index);
   };
 
@@ -48,10 +40,9 @@ function App() {
       </Grid>
 
       <Grid size={{ xs: 12, md: 12 }} container justifyContent="right" alignItems="center">
-        <AlertUI description="No se preveen lluvias" />
+        <AlertUI description="No se preveen lluvias"/>
       </Grid>
 
-      {/* 4. Selector CONTROLADO: Le pasamos currentId */}
       <Grid size={{ xs: 12, md: 3 }} >
         <SelectorUI 
             onCityChange={handleCityChange} 
@@ -90,7 +81,7 @@ function App() {
               </Grid>
             </Grid>
 
-            {/* Gráficos y Tablas limitados a 24h */}
+            {/* Fila de Gráficos y Tabla */}
             <Grid size={{ xs: 12, md: 6 }} sx={{ display: { xs: "none", md: "block" } }}>
               <ChartUI labels={data.hourly.time.slice(0, 24)} dataValues={data.hourly.temperature_2m.slice(0, 24)} />
             </Grid>
@@ -99,6 +90,15 @@ function App() {
               <TableUI times={data.hourly.time.slice(0, 24)} temperatures={data.hourly.temperature_2m.slice(0, 24)} />
             </Grid>
 
+            {/* --- NUEVA SECCIÓN: ASISTENTE IA --- */}
+            <Grid size={{ xs: 12, md: 12 }}>
+                <CohereAssistant 
+                    weatherData={data} 
+                    city={citiesConfig[selectedCityIndex].name} 
+                />
+            </Grid>
+
+            {/* Footer */}
             <Grid size={{ xs: 12, md: 12 }} container justifyContent="center" sx={{ mt: 4, mb: 4, opacity: 0.7 }}>
                 <Typography variant="caption" display="block" align="center">
                     Hora Local: {localTime.toLocaleTimeString()} <br/>
